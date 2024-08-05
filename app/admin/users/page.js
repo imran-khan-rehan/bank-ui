@@ -97,7 +97,7 @@ const AdminUsersPage = () => {
         <thead>
           <tr>
             <th className="py-2 px-4 border-b text-center">Serial</th>
-            <th className="py-2 px-4 border-b text-center">User ID</th>
+            <th className="py-2 px-4 border-b text-center">Account Number</th>
             <th className="py-2 px-4 border-b text-center">Username</th>
             <th className="py-2 px-4 border-b text-center">Email</th>
             <th className="py-2 px-4 border-b text-center">Role</th>
@@ -105,19 +105,22 @@ const AdminUsersPage = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredUsers.map((user, index) => (
-            <tr key={user.id}>
-              <td className="py-2 px-4 border-b text-center">{index + 1}</td>
-              <td className="py-2 px-4 border-b text-center">{user.id}</td>
-              <td className="py-2 px-4 border-b text-center">{user.name}</td>
-              <td className="py-2 px-4 border-b text-center">{user.email}</td>
-              <td className="py-2 px-4 border-b text-center">{user.role}</td>
-              <td className="py-2 px-4 border-b text-center">
-                <button onClick={() => handleEdit(user)} className="text-blue-500 mr-2">Edit</button>
-                <button onClick={() => handleDelete(user.id)} className="text-red-500">Delete</button>
-              </td>
-            </tr>
-          ))}
+          {filteredUsers.map((user, index) => {
+            if (user.email == "admin@admin.com") return null;
+            return (
+              <tr key={user.id}>
+                <td className="py-2 px-4 border-b text-center">{index + 1}</td>
+                <td className="py-2 px-4 border-b text-center">{user.accountNumber}</td>
+                <td className="py-2 px-4 border-b text-center">{user.name}</td>
+                <td className="py-2 px-4 border-b text-center">{user.email}</td>
+                <td className="py-2 px-4 border-b text-center">{user.role}</td>
+                <td className="py-2 px-4 border-b text-center">
+                  <button onClick={() => handleEdit(user)} className="text-blue-500 mr-2">Edit</button>
+                  <button onClick={() => handleDelete(user.id)} className="text-red-500">Delete</button>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
       {isModalOpen && (

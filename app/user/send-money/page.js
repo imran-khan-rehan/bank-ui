@@ -12,15 +12,29 @@ function TransferMoney() {
 
     const handleTransfer = async (e) => {
         e.preventDefault();
-
+    
         if (!user || !user.token) {
             setError("User is not authenticated. Please log in again.");
             return;
         }
-        if (user.id == accountNumber) {
-            setError("Error: sender and receiver account cant be same");
+        
+        // Validate accountNumber
+        const accountNumberValue = accountNumber.toString();
+        if (!/^\d+$/.test(accountNumberValue)) {
+            setError("Error: Account number must contain only digits.");
             return;
         }
+        
+        if (accountNumberValue.length < 10) {
+            setError("Error: Account number must be at least 10 digits long.");
+            return;
+        }
+        
+        if (user.accountNumber === accountNumber) {
+            setError("Error: Sender and receiver accounts cannot be the same.");
+            return;
+        }
+        
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/transactions`, {
                 method: "POST",
@@ -30,21 +44,21 @@ function TransferMoney() {
                 },
                 body: JSON.stringify({
                     sender: { id: user.id },
-                    receiver: { id: parseInt(accountNumber) },
+                    receiver: { accountNumber: parseInt(accountNumberValue) },
                     amount: parseFloat(amount),
                     date: new Date().toISOString()
                 })
             });
-            console.log(response);
+    
             if (response.ok) {
                 const transaction = await response.json();
-                setSuccessMessage(`Successfully transferred $${transaction.amount} to account ${accountNumber}.`);
+                setSuccessMessage(`Successfully transferred $${transaction.amount} to account ${accountNumberValue}.`);
                 setError(null);
-            } else if (response.status == 404) {
-                setError("There is no user exist of this id");
+            } else if (response.status === 404) {
+                setError("There is no user with this account number.");
                 setSuccessMessage(null);
             } else {
-                setError("Error: balance insufficient");
+                setError("Error: Balance insufficient.");
                 setSuccessMessage(null);
             }
         } catch (error) {
@@ -53,6 +67,7 @@ function TransferMoney() {
             setSuccessMessage(null);
         }
     };
+    
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-5">
@@ -79,7 +94,7 @@ function TransferMoney() {
                                 <div>
                                     <label className="block text-lg font-medium">Recipient Account Number</label>
                                     <input
-                                        type="number"
+                                        type="text"
                                         value={accountNumber}
                                         onChange={(e) => setAccountNumber(e.target.value)}
                                         className="mt-1 block w-full p-3 bg-white bg-opacity-60 border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500"

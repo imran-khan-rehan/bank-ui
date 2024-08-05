@@ -86,7 +86,7 @@ export default function TransactionHistory() {
               <div className="flex justify-between mb-3">
                 <div className="bg-white p-2 rounded-md w-full">
                   <span className="text-sm text-gray-700">Account:</span>
-                  <span className="font-semibold text-lg ml-2">{transaction.receiver.id}</span>
+                  <span className="font-semibold text-lg ml-2">{transaction.receiver.accountNumber}</span>
                 </div>
               </div>
               <div className="flex items-center mb-3">

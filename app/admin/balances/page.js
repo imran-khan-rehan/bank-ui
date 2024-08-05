@@ -103,7 +103,7 @@ const AdminBalancesPage = () => {
     } catch (error) {
       console.error('Error fetching balances:', error);
     }
-    finally{
+    finally {
       setLoading(false);
     }
   };
@@ -112,39 +112,45 @@ const AdminBalancesPage = () => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
-if(loading)
-{
-  return <div>Loading ...</div>
-}
+  if (loading) {
+    return <div>Loading ...</div>
+  }
   return (
     <main className="min-h-screen p-5">
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-2xl font-bold">Admin Dashboard - Balances</h1>
       </div>
       <table className="min-w-full bg-white">
-  <thead>
-    <tr>
-      <th className="py-2 px-4 border-b text-center">Serial</th>
-      <th className="py-2 px-4 border-b text-center">Account Holder ID</th>
-      <th className="py-2 px-4 border-b text-center">Email</th>
-      <th className="py-2 px-4 border-b text-center">Amount</th>
-      <th className="py-2 px-4 border-b text-center">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {balances.map((balance, index) => (
-      <tr key={balance.id}>
-        <td className="py-2 px-4 border-b text-center">{index + 1}</td>
-        <td className="py-2 px-4 border-b text-center">{balance.accountHolder.id}</td>
-        <td className="py-2 px-4 border-b text-center">{balance.accountHolder.email}</td>
-        <td className="py-2 px-4 border-b text-center">{balance.amount}</td>
-        <td className="py-2 px-4 border-b text-center">
-          <button onClick={() => handleAddAmount(balance.accountHolder)} className="text-blue-500 mr-2">Add Amount</button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+        <thead>
+          <tr>
+            <th className="py-2 px-4 border-b text-center">Serial</th>
+            <th className="py-2 px-4 border-b text-center">Account Number</th>
+            <th className="py-2 px-4 border-b text-center">Email</th>
+            <th className="py-2 px-4 border-b text-center">Amount</th>
+            <th className="py-2 px-4 border-b text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {balances.map((balance, index) => {
+            if (balance.accountHolder.email === "admin@admin.com") {
+              return null; 
+            }
+
+            return (
+              <tr key={balance.id}>
+                <td className="py-2 px-4 border-b text-center">{index + 1}</td>
+                <td className="py-2 px-4 border-b text-center">{balance.accountHolder.accountNumber}</td>
+                <td className="py-2 px-4 border-b text-center">{balance.accountHolder.email}</td>
+                <td className="py-2 px-4 border-b text-center">{balance.amount}</td>
+                <td className="py-2 px-4 border-b text-center">
+                  <button onClick={() => handleAddAmount(balance.accountHolder)} className="text-blue-500 mr-2">Add Amount</button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+
+      </table>
 
       {isModalOpen && (
         <BalanceModal

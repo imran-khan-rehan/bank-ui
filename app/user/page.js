@@ -36,7 +36,7 @@ const Home = () => {
           const balanceData = await response.json();
           console.log(balanceData);
           setBalance(balanceData.amount);
-          setAccount(balanceData.accountHolder.id);
+          setAccount(balanceData.accountHolder.accountNumber);
         } else {
           console.error("Failed to fetch balance");
         }

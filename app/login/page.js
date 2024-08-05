@@ -64,8 +64,9 @@ export default function Signin() {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          const { response: token, id, role } = data;
-          login({ email, token, id });
+          const { response: token, id, role,accountNumber } = data;
+          alert(accountNumber);
+          login({ email, token, id,accountNumber });
 
           const setCookieResponse = await fetch('/api/auth/set-cookies', {
             method: 'POST',

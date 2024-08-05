@@ -8,8 +8,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import HomeNavBar from '@/components/HomeNavBar';
+
 const SignUp = () => {
-    const router=useRouter();
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
@@ -21,6 +22,8 @@ const SignUp = () => {
     const [validName, setValidName] = useState(true);
 
     const [matchPassword, setMatchPassword] = useState(true);
+    const [isValidPassword, setValidPassword] = useState(true);
+    const [passwordMessage, setPasswordMessage] = useState("Password must be at least 8 characters long and must contain both letters and digits.");
     const [messageEmail, setMessageEmail] = useState("Enter a valid email address");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -33,6 +36,7 @@ const SignUp = () => {
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
         setMatchPassword(true);
+        checkPasswordValidity(e.target.value);
     };
 
     const handleConfirmPasswordChange = (e) => {
@@ -43,29 +47,26 @@ const SignUp = () => {
     const handleSignUp = async (e) => {
         e.preventDefault();
         checkEmail();
-        checkPassword();
-        if(name.length==0)
-        {
+        checkPasswordMatch();
+        checkPasswordValidity(password);
+        if (name.length == 0) {
             setValidName(false);
         }
-        if (validName && isValidEmail && matchPassword && password.length > 0) {
+        if (validName && isValidEmail && matchPassword && isValidPassword && password.length > 0) {
             setIsLoading(true);
             try {
-                
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({name, email, password,role:"USER" }),
+                    body: JSON.stringify({ name, email, password, role: "USER" }),
                 });
 
-                console.log(response);
                 if (response.ok) {
                     alert("Account Created !!");
-                    const data=await response.json();
-                    const token=data.response;
-                    console.log(token);
+                    const data = await response.json();
+                    const token = data.response;
                     router.push('/login');
                 } else {
                     const data = await response.json();
@@ -85,13 +86,21 @@ const SignUp = () => {
     };
 
     const checkEmail = () => {
-            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-            setValidEmail(emailRegex.test(email));
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        setValidEmail(emailRegex.test(email));
     };
 
-    const checkPassword = () => {
-        setMatchPassword(password.length>0 && password === confirmPassword);
+    const checkPasswordMatch = () => {
+        setMatchPassword(password.length > 0 && password === confirmPassword);
     };
+
+    const checkPasswordValidity = (password) => {
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&`^~#\-_+=<>?.,:;\\'"]{8,}$/;
+        setValidPassword(passwordRegex.test(password));
+    };
+
+
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
@@ -103,7 +112,7 @@ const SignUp = () => {
 
     return (
         <div className=' w-screen flex flex-col gap-2'>
-            <HomeNavBar/>
+            <HomeNavBar />
             <div className="min-h-screen custom flex justify-center items-center text-sm">
                 <div className="fixwidth bg-white relative bg-opacity-20 backdrop-filter backdrop-blur-[200px] border border-gray-300 h-[80%] pt-7 w-[40%] p-10 rounded-md border-1 border-solid border-yellow-500 shadow-md
                 max-md:p-8 max-md:w-80 max-md:pt-8 max-md:pb-8 font-medium text-base">
@@ -119,7 +128,7 @@ const SignUp = () => {
                             {!validName && (
                                 <div className="flex">
                                     <Image src={warimage} width={20} height={20} alt='warning' className='text-white'></Image>
-                                    <p className='pl-1 text-red-600'>Name cant be empty</p>
+                                    <p className='pl-1  text-red-600'>Name can't be empty</p>
                                 </div>
                             )}
                         </div>
@@ -127,7 +136,7 @@ const SignUp = () => {
                             type="text"
                             placeholder='john'
                             value={name}
-                            onChange={(e)=>{setName(e.target.value); setValidName(true)}}
+                            onChange={(e) => { setName(e.target.value); setValidName(true) }}
                             required
                             className="border border-solid border-yellow-500 w-full p-2 rounded-md text-sm font-normal"
                         />
@@ -136,9 +145,9 @@ const SignUp = () => {
                         <div className="mb-2 flex justify-between">
                             <label className="text-black block">E-mail</label>
                             {!isValidEmail && (
-                                <div className="flex">
+                                <div className="flex ">
                                     <Image src={warimage} width={20} height={20} alt='warning' className='text-white'></Image>
-                                    <p className='pl-1 text-red-600'>{messageEmail}</p>
+                                    <p className='  pl-1 text-red-600'>{messageEmail}</p>
                                 </div>
                             )}
                         </div>
@@ -151,7 +160,7 @@ const SignUp = () => {
                             className="border border-solid border-yellow-500 w-full p-2 rounded-md text-sm font-normal"
                         />
                     </div>
-                    <div className="mb-4 mt-4 font-poppins">
+                    <div className=" mt-4 font-poppins">
                         <label className="mb-2 text-black block">Password:</label>
                         <div className="relative">
                             <input
@@ -169,22 +178,30 @@ const SignUp = () => {
                                 className={`absolute top-1/2 transform -translate-y-1/2 right-2 cursor-pointer ${password.length >= 1 ? 'block' : 'hidden'}`}
                                 onClick={togglePasswordVisibility}
                             />
+
+                        </div>
+                        <div className=' h-8'>
+                            {!isValidPassword && (
+                                <div className="text-red-800  mt-1">
+                                    {passwordMessage}
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <div className="mb-4 mt-4 font-poppins">
+                    <div className="mb-4 font-poppins">
                         <div className="mb-2 flex justify-between">
                             <label className="text-black">Confirm Password:</label>
                             {!matchPassword && (
                                 <div className="flex justify-end text-right">
                                     <Image src={warimage} width={20} height={20} alt='warning'></Image>
-                                    <p className='ml-1 text-red-600'>Password doesnt match.f</p>
+                                    <p className='ml-1 text-red-600'>Password doesnt match</p>
                                 </div>
                             )}
                         </div>
                         <div className="relative">
                             <input
                                 type={showPassword1 ? 'text' : 'password'}
-                                onBlur={checkPassword}
+                                onBlur={checkPasswordMatch}
                                 value={confirmPassword}
                                 placeholder='Confirm your password'
                                 onChange={handleConfirmPasswordChange}
@@ -203,8 +220,6 @@ const SignUp = () => {
                     <Submitbutton message='Sign up' handleSignIn={handleSignUp} />
                 </div>
             </div>
-           
-           
         </div>
     );
 };

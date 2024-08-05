@@ -19,12 +19,16 @@ export default function Signin() {
   const [message, setMessage] = useState('Incorrect email or password. Please try again.');
   const [isLoading, setIsLoading] = useState(false);
 
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&`^~#\-_+=<>?.,:;\\'"]{8,}$/;
+  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  
   const { login } = useUser();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setValidCred(true);
   };
+  
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -32,7 +36,20 @@ export default function Signin() {
   };
   const handleSignIn = async (e) => {
     e.preventDefault();
-    if (email && password) {
+    if(!emailRegex.test(email))
+      {
+        setValidCred(false);
+        setIsLoading(false);
+        setMessage("wrong Email")
+      }
+    
+    else if(!passwordRegex.test(password))
+      {
+        setValidCred(false);
+        setIsLoading(false);
+        setMessage("Wrong password")
+      }
+    else if (email && password) {
       setIsLoading(true);
       try {
         
@@ -89,7 +106,7 @@ export default function Signin() {
     <div className='w-screen flex flex-col'>
       <HomeNavBar />
       <div className='custom h-screen flex justify-center items-center'>
-        <div className="fixwidth p-20 bg-white relative bg-opacity-20 backdrop-filter backdrop-blur-[200px] border border-gray-300 rounded-md shadow-md max-md:pt-20 max-md:pb-20 max-md:pl-10 max-md:pr-10 max-md:w-80">
+        <div className="w-[500px] p-20 bg-white relative bg-opacity-20 backdrop-filter backdrop-blur-[200px] border border-gray-300 rounded-md shadow-md max-md:pt-20 max-md:pb-20 max-md:pl-10 max-md:pr-10 max-md:w-80">
           <div className="text-3xl font-bold leading-9 text-center">Sign in</div>
           <div className="text-black text-xs font-normal leading-0 mt-3 text-center">
             Dont have an account?

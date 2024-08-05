@@ -5,19 +5,20 @@ const UserEditModal = ({ user, isOpen, onClose, onSave, token, isEdit }) => {
         name: isEdit && user ? user.name : '',
         email: isEdit && user ? user.email : '',
         role: isEdit && user ? user.role : 'USER',
-        password: isEdit && user ? user.role : ''
+        password: ''
     };
 
     const [formData, setFormData] = useState(initialFormData);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         if (isEdit && user) {
             setFormData({
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                password: user.password
+                password: ''
             });
         } else {
             setFormData(initialFormData);
@@ -30,16 +31,39 @@ const UserEditModal = ({ user, isOpen, onClose, onSave, token, isEdit }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePassword = (password) => {
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&`^~#\-_+=<>?.,:;\\'"]{8,}$/;
+        return passwordRegex.test(password);
+    };
+
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
+
+        if (formData.name.trim() === '' || formData.email.trim() === '') {
+            setError('Name or email can\'t be empty');
+            setLoading(false);
+            return;
+        }
+
+        if (!validateEmail(formData.email)) {
+            setError('Invalid email format');
+            setLoading(false);
+            return;
+        }
+
+        if (!isEdit && !validatePassword(formData.password)) {
+            setError('Password must be at least 8 characters long and include letters and digits');
+            setLoading(false);
+            return;
+        }
+
         try {
-            console.log(formData);
-            if(formData.name == "" || formData.email == "")
-            {
-                setError("name or email cant be empty");
-                return;
-            }
             const response = await fetch(
                 isEdit
                     ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user.id}`
@@ -57,15 +81,14 @@ const UserEditModal = ({ user, isOpen, onClose, onSave, token, isEdit }) => {
             if (response.ok) {
                 onSave();
                 onClose();
-            } else if (response.status === 409 || response.status == 400) {
+            } else if (response.status === 409 || response.status === 400) {
                 setError('Email already exists');
             } else {
                 setError('Failed to update user');
             }
         } catch (error) {
-            setError("Some thing went wrong");
-        }
-        finally {
+            setError('Something went wrong');
+        } finally {
             setLoading(false);
         }
     };
@@ -118,7 +141,7 @@ const UserEditModal = ({ user, isOpen, onClose, onSave, token, isEdit }) => {
                         <div className="mb-4">
                             <label className="block text-gray-700">Password</label>
                             <input
-                                type="text"
+                                type="password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
@@ -144,7 +167,6 @@ const UserEditModal = ({ user, isOpen, onClose, onSave, token, isEdit }) => {
                     </div>
                 </form>
                 {loading && <div className="text-red-500 mt-4">Loading ...</div>}
-
                 {error && <div className="text-red-500 mt-4">{error}</div>}
             </div>
         </div>

@@ -21,7 +21,7 @@ const AdminUsersPage = () => {
   const fetchUsers = async (token) => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/all`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/alls`, {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',

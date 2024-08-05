@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
 import { BellIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import bcrypt from 'bcryptjs'; // Ensure you have this installed
+import bcrypt from 'bcryptjs';
 import { useRouter } from "next/navigation";
+
 const NavBar = () => {
   const router = useRouter();
   const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
@@ -12,7 +13,7 @@ const NavBar = () => {
     id: "",
     name: "",
     email: "",
-    password: "", // Encrypted password from API
+    password: "",
   });
   const [editPassword, setEditPassword] = useState({
     oldPassword: "",
@@ -22,6 +23,8 @@ const NavBar = () => {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isValidEmail, setValidEmail] = useState(true);
+  const [validPassword, setValidPassword] = useState(true);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -49,7 +52,7 @@ const NavBar = () => {
           id: data.id,
           name: data.name,
           email: data.email,
-          password: data.password, // Encrypted password
+          password: data.password,
         });
       } else {
         console.error('Failed to fetch profile data');
@@ -77,41 +80,67 @@ const NavBar = () => {
   };
 
   const handleInputChange = (e) => {
-    setError(false);
+    setError(null);
 
     const { name, value } = e.target;
     setProfileData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handlePasswordChange = (e) => {
-    setError(false);
+    setError(null);
     const { name, value } = e.target;
     setEditPassword((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&`^~#\-_+=<>?.,:;\\'"]{8,}$/;
+    return passwordRegex.test(password);
   };
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      const passwordMatch = await bcrypt.compare(editPassword.oldPassword, profileData.password);
-
-      if (editPassword.newPassword !== "" && !passwordMatch) {
-        setError("Old password is incorrect.");
-        return;
-      }
-      if (profileData.name.trim().length === 0 || profileData.email.trim().length === 0) {
-        setError("Name or email can't be empty");
+      if (!validateEmail(profileData.email)) {
+        setError("Invalid email format.");
+        setValidEmail(false);
         setLoading(false);
         return;
       }
+      setValidEmail(true);
+
+      if (editPassword.newPassword !== "" && !validatePassword(editPassword.newPassword)) {
+        setError("Password must be at least 8 characters long and must include letters and digits.");
+        setValidPassword(false);
+        setLoading(false);
+        return;
+      }
+      setValidPassword(true);
+
+      const passwordMatch = await bcrypt.compare(editPassword.oldPassword, profileData.password);
+      if (editPassword.newPassword !== "" && !passwordMatch) {
+        setError("Old password is incorrect.");
+        setLoading(false);
+        return;
+      }
+
+      if (profileData.name.trim().length === 0 || profileData.email.trim().length === 0) {
+        setError("Name or email can't be empty.");
+        setLoading(false);
+        return;
+      }
+
       const updatedData = {
         name: profileData.name,
         email: profileData.email,
-
       };
 
       if (editPassword.newPassword !== "") {
-
-        updatedData.password = editPassword.newPassword;
+        updatedData.password = await bcrypt.hash(editPassword.newPassword, 10);
       }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
@@ -125,7 +154,6 @@ const NavBar = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setProfileData({
           id: data.id,
           name: data.name,
@@ -136,16 +164,13 @@ const NavBar = () => {
         setIsEditMode(false);
         setError(null);
       } else if (response.status === 409) {
-        setError('email already exist');
-      }
-      else {
-        setError('failed to update profile');
-
+        setError('Email already exists.');
+      } else {
+        setError('Failed to update profile.');
       }
     } catch (error) {
       console.error('Error updating profile data:', error);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -153,6 +178,7 @@ const NavBar = () => {
   const handleUserIconClick = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
   const handleLogout = async () => {
     try {
       const response = await fetch('/api/auth/logout', {
@@ -161,7 +187,6 @@ const NavBar = () => {
 
       if (response.ok) {
         sessionStorage.removeItem('user');
-        //alert('Logged out successfully');
         router.push('/login');
       } else {
         alert('Failed to log out');
@@ -170,10 +195,11 @@ const NavBar = () => {
       alert('Failed to log out');
     }
   };
+
   return (
     <nav className="bg-white shadow-md p-4 flex justify-between items-center w-full h-fit">
       <div className="text-black font-bold max-md:ml-[10%]">REDMATH</div>
-      <div className="flex items-center ">
+      <div className="flex items-center">
         <BellIcon className="text-black h-6 w-6 mr-4" />
         <div className="relative">
           <div className="text-black" onClick={handleUserIconClick}>
@@ -188,7 +214,7 @@ const NavBar = () => {
                 My Profile
               </button>
               <button
-                onClick={() => { handleLogout(); }}
+                onClick={handleLogout}
                 className="block w-full shadow-custom hover:bg-slate-400 text-left px-4 py-2 text-sm text-gray-700"
               >
                 Logout
@@ -225,6 +251,7 @@ const NavBar = () => {
                       className="w-full mt-1 p-2 border border-gray-300 rounded"
                       required
                     />
+                    {/* {!isValidEmail && <div className="text-red-500">Invalid email format.</div>} */}
                   </div>
                   <div>
                     <label className="block text-gray-700">Old Password</label>
@@ -234,7 +261,6 @@ const NavBar = () => {
                       value={editPassword.oldPassword}
                       onChange={handlePasswordChange}
                       className="w-full mt-1 p-2 border border-gray-300 rounded"
-
                     />
                   </div>
                   <div>
@@ -248,7 +274,6 @@ const NavBar = () => {
                     />
                   </div>
                   {loading && <div className="text-red-500">Loading ...</div>}
-
                   {error && <div className="text-red-500">{error}</div>}
                 </>
               ) : (

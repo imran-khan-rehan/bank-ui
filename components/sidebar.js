@@ -1,4 +1,4 @@
-'use client';
+
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,13 +8,13 @@ import accountsIcon from '@/public/icons/accounts.svg';
 import transactionsIcon from '@/public/icons/transactions.svg';
 import crossIcon from '@/public/icons/cross.svg';
 import menuIcon from '@/public/icons/menu.svg';
-
+import { usePathname } from 'next/navigation';
 const Sidebar = () => {
   const [selected, setSelected] = useState('/');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dropdownRef = useRef(null);
   const router = useRouter();
-  const pathname = router.asPath;
+  const pathname = usePathname();
 
   const closeSidebar = () => setSidebarOpen(false);
 

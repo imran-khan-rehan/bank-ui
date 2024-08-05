@@ -82,14 +82,18 @@ function TransferMoney() {
                         <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg shadow-lg rounded-lg p-8 w-full border border-gray-200">
                             <form onSubmit={handleTransfer} className="space-y-5">
                                 <div>
-                                    <label className="block text-lg font-medium">Recipient Name(Optional)</label>
-                                    <input
+                                    <label className="block text-lg font-medium">Purpose of Payment (Optional)</label>
+                                    {/* <input
                                         type="text"
                                         value={recipient}
                                         onChange={(e) => { setRecipient(e.target.value); setError(null); }}
                                         className="mt-1 block w-full p-3 bg-white bg-opacity-60 border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
 
-                                    />
+                                    /> */}
+                                    <select className="mt-1 block w-full p-3 bg-white bg-opacity-60 border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 ">
+                                        <option>others</option>
+                                        <option>Bill and Payments</option>
+                                    </select>
                                 </div>
                                 <div>
                                     <label className="block text-lg font-medium">Recipient Account Number</label>

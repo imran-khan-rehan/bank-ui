@@ -22,7 +22,7 @@ const Home = () => {
       if (data) {
         user = JSON.parse(data);
         setToken(user.token);
-
+       console.log(user.token);
         // Fetch balance by user ID
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/balance/${user.id}`, {
           method: "GET",

@@ -60,13 +60,12 @@ const SignUp = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ name, email, password, role: "USER" }),
+                    body: JSON.stringify({ name, email, password}),
                 });
 
                 if (response.ok) {
                     alert("Account Created !!");
-                    const data = await response.json();
-                    const token = data.response;
+                    //const data = await response.json();
                     router.push('/login');
                 } else {
                     const data = await response.json();

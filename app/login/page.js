@@ -11,7 +11,7 @@ import { useUser } from '@/context/UserContext';
 import HomeNavBar from '@/components/HomeNavBar';
 import { useRouter } from 'next/navigation';
 export default function Signin() {
-  const router=useRouter();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isValidCred, setValidCred] = useState(true);
@@ -20,14 +20,14 @@ export default function Signin() {
   const [isLoading, setIsLoading] = useState(false);
 
   const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-  
+
   const { login } = useUser();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setValidCred(true);
   };
-  
+
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -35,17 +35,16 @@ export default function Signin() {
   };
   const handleSignIn = async (e) => {
     e.preventDefault();
-    if(!emailRegex.test(email))
-      {
-        setValidCred(false);
-        setIsLoading(false);
-        setMessage("wrong Email")
-      }
-    
+    if (!emailRegex.test(email)) {
+      setValidCred(false);
+      setIsLoading(false);
+      setMessage("wrong Email")
+    }
+
     else if (email && password) {
       setIsLoading(true);
       try {
-        
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
           method: "POST",
           headers: {
@@ -57,9 +56,9 @@ export default function Signin() {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          const { response: token, id, role,accountNumber } = data;
+          const { response: token, id, role, accountNumber } = data;
           alert(accountNumber);
-          login({ email, token, id,accountNumber });
+          login({ email, token, id, accountNumber });
 
           const setCookieResponse = await fetch('/api/auth/set-cookies', {
             method: 'POST',
@@ -89,6 +88,9 @@ export default function Signin() {
       } finally {
         setIsLoading(false);
       }
+    } else {
+      setValidCred(false)
+      setMessage("Email or password cant be empty");
     }
   };
 

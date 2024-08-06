@@ -75,7 +75,7 @@ const AdminUsersPage = () => {
   };
 
   const filteredUsers = users.filter(user =>
-    user.id.toString().includes(searchTerm) || user.email.includes(searchTerm)
+    user.accountNumber.toString().includes(searchTerm) || user.email.includes(searchTerm)
   );
   if (loading) {
     return <div>Loading ...</div>
@@ -87,7 +87,7 @@ const AdminUsersPage = () => {
         <button onClick={() => handleEdit(null)} className="bg-blue-500 text-white py-2 px-4 rounded">Add User</button>
         <input
           type="text"
-          placeholder="Search by ID or Email"
+          placeholder="Search by account or Email"
           value={searchTerm}
           onChange={handleSearchChange}
           className="p-2 border border-gray-300 rounded-md"

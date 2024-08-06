@@ -19,7 +19,6 @@ export default function Signin() {
   const [message, setMessage] = useState('Incorrect email or password. Please try again.');
   const [isLoading, setIsLoading] = useState(false);
 
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&`^~#\-_+=<>?.,:;\\'"]{8,}$/;
   const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   
   const { login } = useUser();
@@ -43,12 +42,6 @@ export default function Signin() {
         setMessage("wrong Email")
       }
     
-    else if(!passwordRegex.test(password))
-      {
-        setValidCred(false);
-        setIsLoading(false);
-        setMessage("Wrong password")
-      }
     else if (email && password) {
       setIsLoading(true);
       try {

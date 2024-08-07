@@ -153,3 +153,82 @@ export default function Signin() {
     </div>
   );
 }
+
+
+// 'use client';
+
+// import React, { useState } from 'react';
+// import { useRouter } from 'next/navigation';
+
+// export default function SimpleSignin() {
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const router = useRouter();
+
+//   const handleEmailChange = (e) => {
+//     setEmail(e.target.value);
+//   };
+
+//   const handlePasswordChange = (e) => {
+//     setPassword(e.target.value);
+//   };
+
+//   const handleSignIn = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const response = await fetch('http://localhost:8083/api/v1/auth/login', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, password }),
+//       });
+
+//       if (response.ok) {
+//         const data = await response.json();
+//         console.log(data); // You can handle token storage or other logic here
+//         router.push('/user');
+//       } else {
+//         console.error('Login failed');
+//       }
+//     } catch (error) {
+//       console.error('An error occurred:', error);
+//     }
+//   };
+
+//   return (
+//     <div className="flex justify-center items-center h-screen bg-gray-100">
+//       <div className="w-96 p-6 bg-white rounded-lg shadow-lg">
+//         <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
+//         <form onSubmit={handleSignIn}>
+//           <div className="mb-4">
+//             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+//             <input
+//               id="email"
+//               type="email"
+//               value={email}
+//               onChange={handleEmailChange}
+//               className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+//             />
+//           </div>
+//           <div className="mb-4">
+//             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+//             <input
+//               id="password"
+//               type="password"
+//               value={password}
+//               onChange={handlePasswordChange}
+//               className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+//             />
+//           </div>
+//           <button
+//             type="submit"
+//             className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+//           >
+//             Sign In
+//           </button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// }

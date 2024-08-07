@@ -49,7 +49,6 @@ const Sidebar = () => {
   const menuItems = [
     { name: 'Home', icon: homeIcon, path: '/user' },
     { name: 'Money Transfer', icon: homeIcon, path: '/user/send-money' },
-    { name: 'Add Money', icon: homeIcon, path: '/user/add-money' },
     { name: 'Transactions', icon: transactionsIcon, path: '/user/transactions' },
     { name: 'Logout', icon: homeIcon, path: '/logout', action: handleLogout }
   ];

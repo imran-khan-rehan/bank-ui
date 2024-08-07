@@ -82,6 +82,7 @@ const AdminBalancesPage = () => {
     if (storedUser) {
       setToken(storedUser.token);
       fetchBalances(storedUser.token);
+      
     }
   }, []);
 

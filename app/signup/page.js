@@ -60,7 +60,7 @@ const SignUp = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ name, email, password}),
+                    body: JSON.stringify({ name, email, password }),
                 });
 
                 if (response.ok) {
@@ -127,11 +127,12 @@ const SignUp = () => {
                             {!validName && (
                                 <div className="flex">
                                     <Image src={warimage} width={20} height={20} alt='warning' className='text-white'></Image>
-                                    <p className='pl-1  text-red-600'>Name can't be empty</p>
+                                    <p className='pl-1  text-red-600'>Name cant be empty</p>
                                 </div>
                             )}
                         </div>
                         <input
+                            name='name'
                             type="text"
                             placeholder='john'
                             value={name}
@@ -151,6 +152,7 @@ const SignUp = () => {
                             )}
                         </div>
                         <input
+                            name='Email'
                             type="email"
                             placeholder='name@email.com'
                             value={email}
@@ -163,6 +165,7 @@ const SignUp = () => {
                         <label className="mb-2 text-black block">Password:</label>
                         <div className="relative">
                             <input
+                                name='password'
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
                                 placeholder='Set your password'
@@ -199,6 +202,7 @@ const SignUp = () => {
                         </div>
                         <div className="relative">
                             <input
+                                name='confirmPassword'
                                 type={showPassword1 ? 'text' : 'password'}
                                 onBlur={checkPasswordMatch}
                                 value={confirmPassword}
